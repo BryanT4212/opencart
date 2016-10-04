@@ -56,7 +56,10 @@
         <tr>
           <td><address>
             <?php echo $order['payment_address']; ?>
-            </address></td>
+            </address>
+            <b><?php echo $text_telephone; ?></b> <?php echo $order['telephone']; ?><br />
+            <b><?php echo $text_email; ?></b> <?php echo $order['email']; ?>
+	  </td>
           <td><address>
             <?php echo $order['shipping_address']; ?>
             </address></td>
