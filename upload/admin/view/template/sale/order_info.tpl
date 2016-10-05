@@ -247,7 +247,7 @@
                 <div class="form-group">
                   <label class="col-sm-2 control-label" for="input-notify"><?php echo $entry_notify; ?></label>
                   <div class="col-sm-10">
-                    <input type="checkbox" name="notify" value="1" id="input-notify" />
+                    <input type="checkbox" name="notify" value="1" id="input-notify" checked />
                   </div>
                 </div>
                 <div class="form-group">
