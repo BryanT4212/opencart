@@ -18,9 +18,17 @@ class ModelExtensionShippingPickup extends Model {
 		if ($status) {
 			$quote_data = array();
 
-			$quote_data['pickup'] = array(
-				'code'         => 'pickup.pickup',
-				'title'        => $this->language->get('text_description'),
+			$quote_data['store'] = array(
+				'code'         => 'pickup.store',
+				'title'        => $this->language->get('text_from_store'),
+				'cost'         => 0.00,
+				'tax_class_id' => 0,
+				'text'         => $this->currency->format(0.00, $this->session->data['currency'])
+			);
+
+			$quote_data['event'] = array(
+				'code'         => 'pickup.event',
+				'title'        => $this->language->get('text_at_event'),
 				'cost'         => 0.00,
 				'tax_class_id' => 0,
 				'text'         => $this->currency->format(0.00, $this->session->data['currency'])
