@@ -67,6 +67,64 @@
             </div>
           </div>
           <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-displayTime"><span data-toggle="tooltip" title="<?php echo $help_displayTime; ?>"><?php echo $entry_displayTime; ?></span></label>
+            <div class="col-sm-10">
+              <input type="text" name="displayTime" value="<?php echo $displayTime; ?>" placeholder="<?php echo $text_seconds; ?>" id="input-displayTime" class="form-control" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label" for="input-transition"><span data-toggle="tooltip" title="<?php echo $help_transition; ?>"><?php echo $entry_transition; ?></span></label>
+            <div class="col-sm-10">
+              <select name="transition" id="input-transition" class="form-control">
+							<?php
+							  $transition_options = array_fill_keys(
+																		array( 'fade', 'backSlide', 'goDown', 'fadeUp' ),
+																		'');
+								if (!$transition) $transition = 'fade';
+								$transition_options[$transition] = 'selected="selected"';
+								foreach ($transition_options as $option => $selected)
+								{
+									$prompt = 'text_'.$option; ?>
+                <option value="<?php echo $option; ?>" <?php echo $selected ?>><?php echo ${$prompt}; ?></option>
+								<?php } ?>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="<?php echo $help_pagination; ?>"><?php echo $entry_pagination; ?></span></label>
+            <div class="col-sm-10">
+						  <?php
+							  $pagination_options = array( '', '' );
+								$pagination_options[intval( $pagination )] = 'checked="checked"';
+						  ?>
+              <label class="radio-inline">
+                <input type="radio" name="pagination" value="1" <?php echo $pagination_options[1]; ?> />
+                <?php echo $text_yes; ?>
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="pagination" value="0" <?php echo $pagination_options[0]; ?> />
+                <?php echo $text_no; ?>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="col-sm-2 control-label"><span data-toggle="tooltip" title="<?php echo $help_navigation; ?>"><?php echo $entry_navigation; ?></span></label>
+            <div class="col-sm-10">
+						  <?php
+							  $navigation_options = array( '', '' );
+								$navigation_options[intval( $navigation )] = 'checked="checked"';
+						  ?>
+              <label class="radio-inline">
+                <input type="radio" name="navigation" value="1" <?php echo $navigation_options[1]; ?> />
+                <?php echo $text_yes; ?>
+              </label>
+              <label class="radio-inline">
+                <input type="radio" name="navigation" value="0" <?php echo $navigation_options[0]; ?> />
+                <?php echo $text_no; ?>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
             <label class="col-sm-2 control-label" for="input-status"><?php echo $entry_status; ?></label>
             <div class="col-sm-10">
               <select name="status" id="input-status" class="form-control">

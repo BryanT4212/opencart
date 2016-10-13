@@ -26,13 +26,31 @@ class ControllerExtensionModuleBanner extends Controller {
 		$data['text_edit'] = $this->language->get('text_edit');
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
+		$data['text_yes'] = $this->language->get('text_yes');
+		$data['text_no'] = $this->language->get('text_no');
+        $data['text_fade'] = $this->language->get('text_fade');
+        $data['text_backSlide'] = $this->language->get('text_backSlide');
+        $data['text_goDown'] = $this->language->get('text_goDown');
+        $data['text_fadeUp'] = $this->language->get('text_fadeUp');
+        $data['text_seconds'] = $this->language->get('text_seconds');
 
 		$data['entry_name'] = $this->language->get('entry_name');
 		$data['entry_banner'] = $this->language->get('entry_banner');
 		$data['entry_width'] = $this->language->get('entry_width');
 		$data['entry_height'] = $this->language->get('entry_height');
+		$data['entry_displayTime'] = $this->language->get('entry_displayTime');
+		$data['entry_transition'] = $this->language->get('entry_transition');
+		$data['entry_pagination'] = $this->language->get('entry_pagination');
+		$data['entry_navigation'] = $this->language->get('entry_navigation');
 		$data['entry_status'] = $this->language->get('entry_status');
 
+		$data['help_displayTime'] = $this->language->get('help_displayTime');
+		$data['help_transition'] = $this->language->get('help_transition');
+		$data['help_pagination'] = $this->language->get('help_pagination');
+		$data['help_navigation'] = $this->language->get('help_navigation');
+
+
+        
 		$data['button_save'] = $this->language->get('button_save');
 		$data['button_cancel'] = $this->language->get('button_cancel');
 
@@ -131,6 +149,22 @@ class ControllerExtensionModuleBanner extends Controller {
 		} else {
 			$data['height'] = '';
 		}
+
+        foreach (array( 'displayTime', 'transition', 'pagination', 'navigation' ) as $key)
+        {
+          if (isset($this->request->post[$key]))
+          {
+            $data[$key] = $this->request->post[$key];
+          }
+          elseif (isset($module_info[$key]))
+          {
+            $data[$key] = $module_info[$key];
+          }
+          else
+          {
+            $data[$key] = '';
+          }
+        }
 
 		if (isset($this->request->post['status'])) {
 			$data['status'] = $this->request->post['status'];

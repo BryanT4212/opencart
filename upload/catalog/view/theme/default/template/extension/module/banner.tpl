@@ -11,11 +11,10 @@
 </div>
 <script type="text/javascript"><!--
 $('#banner<?php echo $module; ?>').owlCarousel({
-	items: 6,
-	autoPlay: 3000,
-	singleItem: true,
-	navigation: false,
-	pagination: false,
-	transitionStyle: 'fade'
+	singleItem: <?php echo $singleItem; ?>,
+	autoPlay: <?php echo $autoPlay; ?>,
+	navigation: <?php echo $navigation; ?>,
+	pagination: <?php echo $pagination; ?>,
+	transitionStyle: '<?php echo $transitionStyle; ?>'
 });
 --></script>

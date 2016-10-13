@@ -26,6 +26,18 @@ class ControllerExtensionModuleBanner extends Controller {
 
 		$data['module'] = $module++;
 
+        $data['singleItem'] = 'true';
+        $data['transitionStyle'] = $setting['transition'];
+        $data['autoPlay'] = 'false';
+        $data['navigation'] = 'false';
+        $data['pagination'] = 'false';
+        if (count( $data['banners'] ) > 1)
+        {
+          $data['autoPlay'] = max( 100, intval( $setting['displayTime'] * 1000.0 ) );
+          $data['navigation'] = ($setting['navigation'] ? 'true' : 'false');
+          $data['pagination'] = ($setting['pagination'] ? 'true' : 'false');
+        }
+
 		return $this->load->view('extension/module/banner', $data);
 	}
 }
