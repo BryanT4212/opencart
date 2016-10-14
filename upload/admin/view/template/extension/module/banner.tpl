@@ -37,15 +37,20 @@
           <div class="form-group">
             <label class="col-sm-2 control-label" for="input-banner"><?php echo $entry_banner; ?></label>
             <div class="col-sm-10">
-              <select name="banner_id" id="input-banner" class="form-control">
-                <?php foreach ($banners as $banner) { ?>
-                <?php if ($banner['banner_id'] == $banner_id) { ?>
-                <option value="<?php echo $banner['banner_id']; ?>" selected="selected"><?php echo $banner['name']; ?></option>
-                <?php } else { ?>
-                <option value="<?php echo $banner['banner_id']; ?>"><?php echo $banner['name']; ?></option>
-                <?php } ?>
-                <?php } ?>
-              </select>
+						  <div style="float: right;">
+						    <a href="<?php echo $editBannerDesign; ?>" id="edit-input-banner" data-toggle="tooltip" title="" class="btn btn-primary" data-original-title="<?php echo $text_edit_design; ?>" target="_blank"><i class="fa fa-pencil"></i></a>
+              </div>
+							<div style="margin-right: 4.5em;">
+                <select name="banner_id" id="input-banner" class="form-control">
+                  <?php foreach ($banners as $banner) { ?>
+                  <?php if ($banner['banner_id'] == $banner_id) { ?>
+                  <option value="<?php echo $banner['banner_id']; ?>" selected="selected"><?php echo $banner['name']; ?></option>
+                  <?php } else { ?>
+                  <option value="<?php echo $banner['banner_id']; ?>"><?php echo $banner['name']; ?></option>
+                  <?php } ?>
+                  <?php } ?>
+                </select>
+							</div>
             </div>
           </div>
           <div class="form-group">
@@ -142,5 +147,13 @@
       </div>
     </div>
   </div>
+  <script type="text/javascript"><!--
+$('#edit-input-banner').on('click', function(e) {
+  // Remove any previous banner_id from a prior click
+  e.originalEvent.currentTarget.href = e.originalEvent.currentTarget.href.replace( /\d+$/, '' );
+	// Append the current banner_id
+  e.originalEvent.currentTarget.href += $('#input-banner').val();
+});
+//--></script>
 </div>
 <?php echo $footer; ?>

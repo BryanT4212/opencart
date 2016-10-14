@@ -24,6 +24,7 @@ class ControllerExtensionModuleBanner extends Controller {
 		$data['heading_title'] = $this->language->get('heading_title');
 
 		$data['text_edit'] = $this->language->get('text_edit');
+		$data['text_edit_design'] = $this->language->get('text_edit_design');
 		$data['text_enabled'] = $this->language->get('text_enabled');
 		$data['text_disabled'] = $this->language->get('text_disabled');
 		$data['text_yes'] = $this->language->get('text_yes');
@@ -130,6 +131,8 @@ class ControllerExtensionModuleBanner extends Controller {
 			$data['banner_id'] = '';
 		}
 
+        $data['editBannerDesign'] = $this->url->link('design/banner/edit', 'token=' . $this->session->data['token'] . '&banner_id=', true);
+        
 		$this->load->model('design/banner');
 
 		$data['banners'] = $this->model_design_banner->getBanners();

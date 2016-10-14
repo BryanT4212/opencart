@@ -6,6 +6,7 @@ $_['heading_title']    = 'Banner';
 $_['text_extension']   = 'Extensions';
 $_['text_success']     = 'Success: You have modified banner module!';
 $_['text_edit']        = 'Edit Banner Module';
+$_['text_edit_design'] = 'Edit Banner Design';
 $_['text_fade']        = 'Fade';
 $_['text_backSlide']   = 'Back and Slide Left';
 $_['text_goDown']      = 'Back and Slide Down';
