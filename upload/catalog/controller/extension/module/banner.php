@@ -33,7 +33,9 @@ class ControllerExtensionModuleBanner extends Controller {
         $data['pagination'] = 'false';
         if (count( $data['banners'] ) > 1)
         {
-          $data['autoPlay'] = max( 100, intval( $setting['displayTime'] * 1000.0 ) );
+          $data['autoPlay'] = intval( $setting['displayTime'] * 1000.0 );
+          $data['autoPlay'] = ($data['autoPlay'] ? max( 100, $data['autoPlay'] )
+                                                 : 'false');
           $data['navigation'] = ($setting['navigation'] ? 'true' : 'false');
           $data['pagination'] = ($setting['pagination'] ? 'true' : 'false');
         }
