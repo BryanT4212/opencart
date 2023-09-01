@@ -20,6 +20,9 @@ $_['text_transaction']          = 'Transactions';
 $_['text_transaction_add']      = 'Add Transaction';
 $_['text_report']               = 'Reports';
 $_['text_filter']               = 'Filter';
+$_['text_payment_cheque']       = 'Cheque Payment';
+$_['text_payment_paypal']       = 'PayPal Payment';
+$_['text_payment_bank']         = 'Bank Transfer Payment';
 
 // Column
 $_['column_name']               = 'Customer Name';
@@ -71,6 +74,7 @@ $_['error_customer']            = 'Warning: Customer required!';
 $_['error_already']             = 'Warning: Customer is already registered as an affiliate!';
 $_['error_tracking']            = 'Tracking Code required!';
 $_['error_exists']              = 'Tracking code is being used by another affiliate!';
+$_['error_payment_method']      = 'Payment method required!';
 $_['error_cheque']              = 'Cheque Payee Name required!';
 $_['error_paypal']              = 'PayPal Email Address does not appear to be valid!';
 $_['error_bank_account_name']   = 'Account Name required!';

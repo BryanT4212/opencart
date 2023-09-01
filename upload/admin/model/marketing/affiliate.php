@@ -10,7 +10,7 @@ class Affiliate extends \Opencart\System\Engine\Model {
 	}
 
 	public function editBalance(int $customer_id, float $amount): void {
-		$this->db->query("UPDATE `" . DB_PREFIX . "customer_affiliate` SET `commission` = '" . (float)$amount . "' WHERE `customer_id` = '" . (int)$customer_id . "'");
+		$this->db->query("UPDATE `" . DB_PREFIX . "customer_affiliate` SET `balance` = '" . (float)$amount . "' WHERE `customer_id` = '" . (int)$customer_id . "'");
 	}
 
 	public function deleteAffiliate(int $customer_id): void {
@@ -118,7 +118,7 @@ class Affiliate extends \Opencart\System\Engine\Model {
 		}
 
 		if (!empty($data['filter_payment_method'])) {
-			$implode[] = "ca.`payment_method` = '" . $this->db->escape($data['filter_payment_method']) . "'";
+			$implode[] = "`ca`.`payment_method` = '" . $this->db->escape($data['filter_payment_method']) . "'";
 		}
 
 		if (!empty($data['filter_commission'])) {
