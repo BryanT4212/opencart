@@ -86,8 +86,9 @@ class FileManager extends \Opencart\System\Engine\Controller {
 
 		$this->load->model('tool/image');
 
-		// Get directories
-		$paths = glob($directory . $filter_name . '*{/,.ico,.jpg,.jpeg,.png,.gif,.webp,.JPG,.JPEG,.PNG,.GIF}', GLOB_BRACE);
+		// Get non-hidden directories and allowed file types by extension
+		$base_glob = $directory . $filter_name . '[!.]*';
+		$paths = array_merge(glob($base_glob, GLOB_ONLYDIR), glob($base_glob . '{' . implode(',', $allowed) . '}', GLOB_BRACE));
 
 		$total = count($paths);
 		$limit = 16;
