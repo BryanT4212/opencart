@@ -64,6 +64,7 @@ class FileManager extends \Opencart\System\Engine\Controller {
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
+			$page = ($page > 0 ? $page : 1);
 		} else {
 			$page = 1;
 		}
@@ -86,18 +87,16 @@ class FileManager extends \Opencart\System\Engine\Controller {
 
 		$this->load->model('tool/image');
 
-		// Get directories
-		$paths = glob($directory . $filter_name . '*{/,.ico,.jpg,.jpeg,.png,.gif,.webp,.JPG,.JPEG,.PNG,.GIF}', GLOB_BRACE);
+		// Get non-hidden directories and allowed file types by extension
+		$base_glob = $directory . $filter_name . '[!.]*';
+		$paths = array_merge(glob($base_glob, GLOB_ONLYDIR), glob($base_glob . '{' . implode(',', $allowed) . '}', GLOB_BRACE));
 
 		$total = count($paths);
 		$limit = 16;
 
-		$start = ($page - 1) * $limit;
-		$end = $start > ($total - $limit) ? $total : ($start + $limit);
-
 		if ($paths) {
-			// Split the array based on current page number and max number of items per page of 10
-			foreach (array_slice($paths, $start, $end) as $path) {
+			// Split the array based on current page number and a max number of items per page of $limit
+			foreach (array_slice($paths, ($page - 1) * $limit, $limit) as $path) {
 				$path = str_replace('\\', '/', realpath($path));
 
 				if (substr($path, 0, strlen($path)) == $path) {
@@ -117,20 +116,18 @@ class FileManager extends \Opencart\System\Engine\Controller {
 						$url .= '&ckeditor=' . $this->request->get['ckeditor'];
 					}
 
-					if (is_dir($path)) {
-						$data['directories'][] = [
-							'name' => $name,
-							'path' => oc_substr($path, oc_strlen($base)) . '/',
-							'href' => $this->url->link('common/filemanager.list', 'user_token=' . $this->session->data['user_token'] . '&directory=' . urlencode(oc_substr($path, oc_strlen($base))) . $url)
-						];
-					}
-
-					if (is_file($path) && in_array(substr($path, strrpos($path, '.')), $allowed)) {
+					if (is_file($path)) {
 						$data['images'][] = [
 							'name'  => $name,
 							'path'  => oc_substr($path, oc_strlen($base)),
 							'href'  => HTTP_CATALOG . 'image/catalog/' . oc_substr($path, oc_strlen($base)),
 							'thumb' => $this->model_tool_image->resize(oc_substr($path, oc_strlen(DIR_IMAGE)), 136, 136)
+						];
+					} elseif (is_dir($path)) {
+						$data['directories'][] = [
+							'name' => $name,
+							'path' => oc_substr($path, oc_strlen($base)) . '/',
+							'href' => $this->url->link('common/filemanager.list', 'user_token=' . $this->session->data['user_token'] . '&directory=' . urlencode(oc_substr($path, oc_strlen($base))) . $url)
 						];
 					}
 				}
