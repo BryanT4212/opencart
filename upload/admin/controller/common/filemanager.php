@@ -64,6 +64,7 @@ class FileManager extends \Opencart\System\Engine\Controller {
 
 		if (isset($this->request->get['page'])) {
 			$page = (int)$this->request->get['page'];
+			$page = ($page > 0 ? $page : 1);
 		} else {
 			$page = 1;
 		}
