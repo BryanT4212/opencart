@@ -116,20 +116,18 @@ class FileManager extends \Opencart\System\Engine\Controller {
 						$url .= '&ckeditor=' . $this->request->get['ckeditor'];
 					}
 
-					if (is_dir($path)) {
-						$data['directories'][] = [
-							'name' => $name,
-							'path' => oc_substr($path, oc_strlen($base)) . '/',
-							'href' => $this->url->link('common/filemanager.list', 'user_token=' . $this->session->data['user_token'] . '&directory=' . urlencode(oc_substr($path, oc_strlen($base))) . $url)
-						];
-					}
-
-					if (is_file($path) && in_array(substr($path, strrpos($path, '.')), $allowed)) {
+					if (is_file($path)) {
 						$data['images'][] = [
 							'name'  => $name,
 							'path'  => oc_substr($path, oc_strlen($base)),
 							'href'  => HTTP_CATALOG . 'image/catalog/' . oc_substr($path, oc_strlen($base)),
 							'thumb' => $this->model_tool_image->resize(oc_substr($path, oc_strlen(DIR_IMAGE)), 136, 136)
+						];
+					} elseif (is_dir($path)) {
+						$data['directories'][] = [
+							'name' => $name,
+							'path' => oc_substr($path, oc_strlen($base)) . '/',
+							'href' => $this->url->link('common/filemanager.list', 'user_token=' . $this->session->data['user_token'] . '&directory=' . urlencode(oc_substr($path, oc_strlen($base))) . $url)
 						];
 					}
 				}
