@@ -27,10 +27,10 @@
 {{ total.title }}: {{ total.value }}<br/>
 {% endfor %}
 <br/>
-{% if comment %}
-{{ text_comment }}<br/>
+{% if payment_message %}
+{{ text_system_message }}<br/>
 <br/>
-{{ comment }}<br/>
+{{ payment_message | nl2br }}<br/>
 {% endif %}
 <br/>
 {{ store }}<br/>
