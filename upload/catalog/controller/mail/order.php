@@ -444,9 +444,9 @@ class Order extends \Opencart\System\Engine\Controller {
 		}
 
 		if (isset($args[2])) {
-			$comment = $args[2];
+			$payment_message = $args[2];
 		} else {
-			$comment = '';
+			$payment_message = '';
 		}
 
 		if (isset($args[3])) {
@@ -469,73 +469,83 @@ class Order extends \Opencart\System\Engine\Controller {
 			$data['shipping_method'] = $order_info['shipping_method']['name'];
 			$data['email'] = $order_info['email'];
 			$data['telephone'] = $order_info['telephone'];
+			$data['comment'] = $order_info['comment'];
+
+			if ($payment_message && !preg_match('/^(cod|cheque|bank_transfer)\./', $order_info['payment_method']['code'])) {
+				$data['payment_message'] = $payment_message;
+			}
+			else
+			{
+				// Don't include payment instructions meant for the customer
+				$data['payment_message'] = '';
+			}
 
 			// Payment Address
 			if ($order_info['payment_address_format']) {
-			   $format = $order_info['payment_address_format'];
+				$format = $order_info['payment_address_format'];
 			} else {
-			  $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 			}
 
 			$find = [
-			      '{firstname}',
-			      '{lastname}',
-			      '{company}',
-			      '{address_1}',
-			      '{address_2}',
-			      '{city}',
-			      '{postcode}',
-			      '{zone}',
-			      '{zone_code}',
-			      '{country}'
+				'{firstname}',
+				'{lastname}',
+				'{company}',
+				'{address_1}',
+				'{address_2}',
+				'{city}',
+				'{postcode}',
+				'{zone}',
+				'{zone_code}',
+				'{country}'
 			];
 
 			$replace = [
-				 'firstname' => $order_info['payment_firstname'],
-				 'lastname'  => $order_info['payment_lastname'],
-				 'company'   => $order_info['payment_company'],
-				 'address_1' => $order_info['payment_address_1'],
-				 'address_2' => $order_info['payment_address_2'],
-				 'city'      => $order_info['payment_city'],
-				 'postcode'  => $order_info['payment_postcode'],
-				 'zone'      => $order_info['payment_zone'],
-				 'zone_code' => $order_info['payment_zone_code'],
-				 'country'   => $order_info['payment_country']
+				'firstname' => $order_info['payment_firstname'],
+				'lastname'  => $order_info['payment_lastname'],
+				'company'   => $order_info['payment_company'],
+				'address_1' => $order_info['payment_address_1'],
+				'address_2' => $order_info['payment_address_2'],
+				'city'      => $order_info['payment_city'],
+				'postcode'  => $order_info['payment_postcode'],
+				'zone'      => $order_info['payment_zone'],
+				'zone_code' => $order_info['payment_zone_code'],
+				'country'   => $order_info['payment_country']
 			];
 
 			$data['payment_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace($find, $replace, $format))));
 
 			// Shipping Address
 			if ($order_info['shipping_address_format']) {
-			  $format = $order_info['shipping_address_format'];
+				$format = $order_info['shipping_address_format'];
 			} else {
-			  $format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
+				$format = '{firstname} {lastname}' . "\n" . '{company}' . "\n" . '{address_1}' . "\n" . '{address_2}' . "\n" . '{city} {postcode}' . "\n" . '{zone}' . "\n" . '{country}';
 			}
 
 			$find = [
-			      '{firstname}',
-			      '{lastname}',
-			      '{company}',
-			      '{address_1}',
-			      '{address_2}',
-			      '{city}',
-			      '{postcode}',
-			      '{zone}',
-			      '{zone_code}',
-			      '{country}'
+				'{firstname}',
+				'{lastname}',
+				'{company}',
+				'{address_1}',
+				'{address_2}',
+				'{city}',
+				'{postcode}',
+				'{zone}',
+				'{zone_code}',
+				'{country}'
 			];
 
 			$replace = [
-				 'firstname' => $order_info['shipping_firstname'],
-				 'lastname'  => $order_info['shipping_lastname'],
-				 'company'   => $order_info['shipping_company'],
-				 'address_1' => $order_info['shipping_address_1'],
-				 'address_2' => $order_info['shipping_address_2'],
-				 'city'      => $order_info['shipping_city'],
-				 'postcode'  => $order_info['shipping_postcode'],
-				 'zone'      => $order_info['shipping_zone'],
-				 'zone_code' => $order_info['shipping_zone_code'],
-				 'country'   => $order_info['shipping_country']
+				'firstname' => $order_info['shipping_firstname'],
+				'lastname'  => $order_info['shipping_lastname'],
+				'company'   => $order_info['shipping_company'],
+				'address_1' => $order_info['shipping_address_1'],
+				'address_2' => $order_info['shipping_address_2'],
+				'city'      => $order_info['shipping_city'],
+				'postcode'  => $order_info['shipping_postcode'],
+				'zone'      => $order_info['shipping_zone'],
+				'zone_code' => $order_info['shipping_zone_code'],
+				'country'   => $order_info['shipping_country']
 			];
 
 			$data['shipping_address'] = str_replace(["\r\n", "\r", "\n"], '<br/>', preg_replace(["/\s\s+/", "/\r\r+/", "/\n\n+/"], '<br/>', trim(str_replace($find, $replace, $format))));
@@ -639,7 +649,30 @@ class Order extends \Opencart\System\Engine\Controller {
 				];
 			}
 
-			$data['comment'] = nl2br($order_info['comment']);
+			$store_logo = html_entity_decode($this->config->get('config_logo'), ENT_QUOTES, 'UTF-8');
+
+			if (!defined('HTTP_CATALOG')) {
+			   $store_url = HTTP_SERVER;
+			} else {
+			   $store_url = HTTP_CATALOG;
+			}
+
+			$this->load->model('setting/store');
+
+			$store_info = $this->model_setting_store->getStore($order_info['store_id']);
+
+			if ($store_info) {
+			   $this->load->model('setting/setting');
+
+			   $store_logo = html_entity_decode($this->model_setting_setting->getValue('config_logo', $store_info['store_id']), ENT_QUOTES, 'UTF-8');
+			}
+			$this->load->model('tool/image');
+
+			if (is_file(DIR_IMAGE . $store_logo)) {
+			   $data['logo'] = $store_url . 'image/' . $store_logo;
+			} else {
+			  $data['logo'] = '';
+			}
 
 			$store_logo = html_entity_decode($this->config->get('config_logo'), ENT_QUOTES, 'UTF-8');
 
