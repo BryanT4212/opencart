@@ -66,34 +66,27 @@ class Promotion extends \Opencart\System\Engine\Controller {
 			foreach ($promotion['extensions'] as $result) {
 				$extension_install_info = $this->model_setting_extension->getInstallByExtensionDownloadId($result['extension_download_id']);
 
-				// Download
-				if (!$extension_install_info) {
-					$download = $this->url->link('marketplace/marketplace.download', 'user_token=' . $this->session->data['user_token'] . '&extension_id=' . $result['extension_id'] . '&extension_download_id=' . $result['extension_download_id']);
-				} else {
-					$download = '';
-				}
-
-				// Install
-				if ($extension_install_info && !$extension_install_info['status']) {
-					$install = $this->url->link('marketplace/installer.install', 'user_token=' . $this->session->data['user_token'] . '&extension_install_id=' . $extension_install_info['extension_install_id']);
-				} else {
-					$install = '';
-				}
-
-				// Delete
-				if ($extension_install_info && !$extension_install_info['status']) {
-					$delete = $this->url->link('marketplace/installer.delete', 'user_token=' . $this->session->data['user_token'] . '&extension_install_id=' . $extension_install_info['extension_install_id']);
-				} else {
-					$delete = '';
-				}
-
+				// Only show recommended extensions that haven't been installed
 				if (!$extension_install_info || !$extension_install_info['status']) {
+					if ($extension_install_info) {
+						$status = 'oc-extension-downloaded';
+						$extension_install_id = $extension_install_info['extension_install_id'];
+					} else {
+						$status = 'oc-extension-not-installed';
+						// Set up link template since we have no Install ID until installed
+						$extension_install_id = '{extension_install_id}';
+					}
+
+					$action_params = 'user_token=' . $this->session->data['user_token'] . '&extension_install_id=' . $extension_install_id;
+
 					$data['extensions'][] = [
-						'name'     => $result['name'],
-						'href'     => $this->url->link('marketplace/marketplace.info', 'user_token=' . $this->session->data['user_token'] . '&extension_id=' . $result['extension_id']),
-						'download' => $download,
-						'install'  => $install,
-						'delete'   => $delete
+						'name'      => $result['name'],
+						'status'    => $status,
+						'href'      => $this->url->link('marketplace/marketplace.info', 'user_token=' . $this->session->data['user_token'] . '&extension_id=' . $result['extension_id']),
+						'download'  => $this->url->link('marketplace/marketplace.download', 'user_token=' . $this->session->data['user_token'] . '&extension_id=' . $result['extension_id'] . '&extension_download_id=' . $result['extension_download_id']),
+						'install'   => $this->url->link('marketplace/installer.install', $action_params),
+						'uninstall' => $this->url->link('marketplace/installer.uninstall', $action_params),
+						'delete'    => $this->url->link('marketplace/installer.delete', $action_params)
 					];
 				}
 			}
