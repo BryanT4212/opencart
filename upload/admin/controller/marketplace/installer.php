@@ -419,7 +419,7 @@ class Installer extends \Opencart\System\Engine\Controller {
 			if ($end < $total) {
 				$json['next'] = $this->url->link('marketplace/installer.install', 'user_token=' . $this->session->data['user_token'] . $url . '&page=' . ($page + 1), true);
 			} else {
-				$json['next'] = $this->url->link('marketplace/installer.vendor', 'user_token=' . $this->session->data['user_token'] . $url, true);
+				$json['next'] = $this->url->link('marketplace/installer.vendor', 'user_token=' . $this->session->data['user_token'] . '&action=install' . $url, true);
 			}
 		}
 
@@ -543,7 +543,7 @@ class Installer extends \Opencart\System\Engine\Controller {
 				$url .= '&extension_install_id=' . $this->request->get['extension_install_id'];
 			}
 
-			$json['next'] = $this->url->link('marketplace/installer.vendor', 'user_token=' . $this->session->data['user_token'] . $url, true);
+			$json['next'] = $this->url->link('marketplace/installer.vendor', 'user_token=' . $this->session->data['user_token'] . '&action=uninstall' . $url, true);
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -658,6 +658,12 @@ class Installer extends \Opencart\System\Engine\Controller {
 			file_put_contents(DIR_SYSTEM . 'vendor.php', trim($code));
 
 			$json['success'] = $this->language->get('text_success');
+			if ($this->request->get['action'] == 'install')
+			{
+				$json['status'] = 'oc-extension-installed';
+			} else {
+				$json['status'] = 'oc-extension-downloaded';
+			}
 		}
 
 		$this->response->addHeader('Content-Type: application/json');
@@ -707,6 +713,7 @@ class Installer extends \Opencart\System\Engine\Controller {
 			$this->model_setting_extension->deleteInstall($extension_install_id);
 
 			$json['success'] = $this->language->get('text_success');
+			$json['status'] = 'oc-extension-not-installed';
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

@@ -609,6 +609,22 @@ div.required .col-form-label:not(span):before, td.required:before {
     font-size: 10.5em;
 }
 
+/* Control which dropdown items are unavailable for a given extension state */
+#extension #recommended .dropdown .oc-extension-not-installed .oc-extension-install,
+#extension #recommended .dropdown .oc-extension-not-installed .oc-extension-uninstall,
+#extension #recommended .dropdown .oc-extension-not-installed .oc-extension-delete,
+#extension #recommended .dropdown .oc-extension-downloaded .oc-extension-download,
+#extension #recommended .dropdown .oc-extension-downloaded .oc-extension-uninstall,
+#extension #recommended .dropdown .oc-extension-installed .oc-extension-download,
+#extension #recommended .dropdown .oc-extension-installed .oc-extension-install,
+#extension #recommended .dropdown .oc-extension-installed .oc-extension-delete,
+#extension #recommended .dropdown .oc-extension-activated .oc-extension-download,
+#extension #recommended .dropdown .oc-extension-activated .oc-extension-install,
+#extension #recommended .dropdown .oc-extension-activated .oc-extension-uninstall,
+#extension #recommended .dropdown .oc-extension-activated .oc-extension-delete {
+		display: none;
+}
+
 #extension-list {
     color: #4b525d;
 }

@@ -35,6 +35,7 @@
   </div>
 </div>
 <script type="text/javascript"><!--
+// Register handler to update the extensions display when a type is chosen
 $('#input-type').on('change', function () {
     $.ajax({
         url: $(this).val(),
@@ -58,7 +59,8 @@ $('#input-type').on('change', function () {
     });
 });
 
-// Download promotion extension
+// Register handler to respond when the Download & Install button for a given
+// extension is clicked 
 $('#extension').on('click', '#recommended .btn-primary', function (e) {
     e.preventDefault();
 
@@ -83,11 +85,14 @@ $('#extension').on('click', '#recommended .btn-primary', function (e) {
             if (json['success']) {
                 $('#extension').before('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + '  <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-                // Manually build the url so no need to refresh extensions and can trigger install
-                // Once the extension is downloaded we trigger the installer
-                $(element).parent().find('.dropdown-menu').html('<a href="index.php?route=marketplace/installer.install&user_token={{ user_token }}&extension_install_id=' + json['extension_install_id'] + '" class="dropdown-item"><i class="fa-solid fa-plus-circle fa-fw"></i> {{ text_install }}</a> <a href="index.php?route=marketplace/installer.delete&user_token={{ user_token }}&extension_install_id=' + json['extension_install_id'] + '" class="dropdown-item"><i class="fa-regular fa-trash-can fa-fw"></i> {{ text_delete }}</a>');
+              // We have an extension_install_id now so update dropdown items
+              $(element).siblings('.dropdown-menu').find('.dropdown-item').attr('href', function( index, url ) { return url.replace('{extension_install_id}', json['extension_install_id']); });
 
-                $(element).parent().find('.dropdown-item:first').trigger('click');
+              // Update the extension state to downloaded
+              $(element).closest('.btn-group').removeClass('oc-extension-not-installed oc-extension-downloaded oc-extension-installed oc-extension-activated').addClass('oc-extension-downloaded');
+
+              // Auto-install
+              $(element).siblings('.dropdown-menu').find('.dropdown-item.oc-extension-install').trigger('click');
             }
         },
         error: function (xhr, ajaxOptions, thrownError) {
@@ -98,35 +103,66 @@ $('#extension').on('click', '#recommended .btn-primary', function (e) {
     });
 });
 
-// Download dropdown
-$('#extension').on('click', '.dropdown-item', function (e) {
-    e.preventDefault();
+ /**
+  * Handle the response from the recommended extension installer API
+  *
+  * @param object dropdown_item  DOM element representing the button clicked
+  *                              on to initiate the API call
+  *
+  * @oaram string api_call       URL of the API function to be invoked
+  *
+  * @return void
+  */
+ function recommended_extension_action (dropdown_item, api_call) {
+   $.ajax({
+     url: api_call,
+     dataType: 'json',
+     success: function (json) {
+       $('.alert-dismissible').remove();
 
-    var element = this;
+       if (json['error']) {
+         $('#extension').before('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div></div>');
+       } else if (json['success']) {
+         $('#extension').before('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + '  <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
-    $.ajax({
-        url: $(element).attr('href'),
-        dataType: 'json',
-        success: function (json) {
-            $('.alert-dismissible').remove();
+         // Update the extension state now that the API call is complete
+         new_status = '';
+         if (json['status']) {
+           new_status = json['status'];
+         } else if (json['extension_install_id']) {
+           new_status = 'oc-extension-downloaded';
+         }
 
-            if (json['error']) {
-                $('#extension').before('<div class="alert alert-danger alert-dismissible"><i class="fa-solid fa-circle-exclamation"></i> ' + json['error'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div></div>');
-            }
+         if (new_status) {
+           $(dropdown_item).closest('.btn-group').removeClass('oc-extension-not-installed oc-extension-downloaded oc-extension-installed oc-extension-activated').addClass(new_status);
+         }
 
-            if (json['success']) {
-                $('#extension').before('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + '  <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
+         // Update the extension display
+         $('#input-type').trigger('change');
+       } else if (json['next']) {
+         // API continuation
+         recommended_extension_action(dropdown_item, json['next']);
+       } else {
+         console.log( 'Unrecognized response: ' + json + ' received from ' + api_call );
+       }
+     },
+     error: function (xhr, ajaxOptions, thrownError) {
+       console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+     }
+   });
+ }
+ 
+ // Register handler to respond to an item on a dropdown menu being clicked
+ $('#extension').on('click', '.dropdown-item', function (e) {
+   e.preventDefault();
 
-                $('#extension').load($('#input-type').val());
-            }
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-            console.log(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
-        }
-    });
-});
+   var element = this;
 
-// Install
+   recommended_extension_action(element, $(element).attr('href'));
+ });
+
+// Register handler to respond when the activate button of a given extension is
+// clicked 
 $('#extension').on('click', '.btn-success', function (e) {
     e.preventDefault();
 
@@ -151,6 +187,9 @@ $('#extension').on('click', '.btn-success', function (e) {
             if (json['success']) {
                 $('#alert').prepend('<div class="alert alert-success alert-dismissible"><i class="fa-solid fa-check-circle"></i> ' + json['success'] + ' <button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>');
 
+                // Update the extension state to installed
+                $(element).parent().find('.btn-group').removeClass('oc-extension-not-installed oc-extension-downloaded oc-extension-installed oc-extension-activated').addClass('oc-extension-installed');
+              
                 $('#input-type').trigger('change');
             }
         },
@@ -160,7 +199,8 @@ $('#extension').on('click', '.btn-success', function (e) {
     });
 });
 
-// Uninstall / Delete
+// Register handler to respond when the deactivate button of a given extension
+// is clicked 
 $('#extension').on('click', '.btn-danger, .btn-outline-danger', function (e) {
     e.preventDefault();
 
